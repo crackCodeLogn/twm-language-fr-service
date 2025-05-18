@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: twm-language-fr-service
+  datasource:
+    url: jdbc:postgresql://${CRDB_DB_HOST}:${CRDB_DB_PORT}/${CRDB_DB}
+    username: ${CRDB_USERNAME}
+  jpa:
+    database: postgresql
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+
+
+server:
+  port: 36145
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:2012/eureka}
+  instance:
+    preferIpAddress: true
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 10000 #milliseconds
+        readTimeout: 10000
