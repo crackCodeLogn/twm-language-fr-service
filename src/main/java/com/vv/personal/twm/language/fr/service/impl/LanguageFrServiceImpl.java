@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.InvalidObjectException;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -97,6 +98,8 @@ public class LanguageFrServiceImpl implements LanguageFrService {
           Character gender2 = sanitizeString(parts[3]).charAt(0);
           String pronunciation = sanitizeString(parts[4]);
           String posTag = sanitizeString(parts[5]);
+          List<String> posTags =
+              Arrays.stream(posTag.split(",")).map(String::strip).collect(Collectors.toList());
 
           LanguageFr word =
               LanguageFr.builder()
@@ -105,7 +108,7 @@ public class LanguageFrServiceImpl implements LanguageFrService {
                   .gender(gender)
                   .gender2(gender2)
                   .pronunciation(pronunciation)
-                  .posTag(posTag)
+                  .posTags(posTags)
                   .build();
           frenchWords.add(word);
         } catch (Exception e) {
@@ -131,11 +134,16 @@ public class LanguageFrServiceImpl implements LanguageFrService {
   }
 
   private LanguageFr generateLanguageFr(LanguageFrEntity languageFrEntity) {
+    List<String> posTags =
+        Arrays.stream(StringUtils.split(languageFrEntity.getPosTag(), ','))
+            .map(String::strip)
+            .toList();
+
     return LanguageFr.builder()
         .frenchWord(languageFrEntity.getFrenchWord())
         .englishMeaning(languageFrEntity.getEnglishMeaning())
         .gender(languageFrEntity.getGender())
-        .posTag(languageFrEntity.getPosTag())
+        .posTags(posTags)
         .pronunciation(languageFrEntity.getPronunciation())
         .gender2(languageFrEntity.getGender2())
         .build();
@@ -146,7 +154,7 @@ public class LanguageFrServiceImpl implements LanguageFrService {
     if (StringUtils.isEmpty(languageFr.getFrenchWord())
         || StringUtils.isEmpty(languageFr.getEnglishMeaning())
         || StringUtils.isEmpty(languageFr.getGender())
-        || StringUtils.isEmpty(languageFr.getPosTag())
+        || languageFr.getPosTags().isEmpty()
         || StringUtils.isEmpty(languageFr.getPronunciation())) {
       throw new InvalidObjectException("one of the primary fields is empty");
     }
@@ -156,7 +164,7 @@ public class LanguageFrServiceImpl implements LanguageFrService {
         .frenchWord(sanitizeString(languageFr.getFrenchWord()))
         .englishMeaning(sanitizeString(languageFr.getEnglishMeaning()))
         .gender(gender)
-        .posTag(sanitizeString(languageFr.getPosTag()))
+        .posTag(sanitizeString(StringUtils.join(languageFr.getPosTags(), ',')))
         .pronunciation(sanitizeString(languageFr.getPronunciation()))
         .gender2(processGender(gender, languageFr.getGender2()))
         .createTimestamp(currentTs)
@@ -168,6 +176,7 @@ public class LanguageFrServiceImpl implements LanguageFrService {
     return switch (gender) {
       case "le" -> 'm';
       case "la" -> 'f';
+      case "uni" -> '-';
       default -> gender2 == null ? '-' : gender2;
     };
   }
