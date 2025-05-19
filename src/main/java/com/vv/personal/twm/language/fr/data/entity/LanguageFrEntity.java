@@ -47,6 +47,9 @@ public class LanguageFrEntity {
   @Column(name = "gender2")
   private Character gender2;
 
+  @Column(name = "src")
+  private String source;
+
   @Column(name = "cre_ts")
   private Instant createTimestamp;
 

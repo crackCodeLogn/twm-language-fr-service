@@ -18,4 +18,5 @@ public class LanguageFr {
   private List<String> posTags;
   private String pronunciation;
   private Character gender2;
+  private String source;
 }

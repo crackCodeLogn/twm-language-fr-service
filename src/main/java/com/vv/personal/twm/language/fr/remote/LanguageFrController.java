@@ -137,9 +137,10 @@ public class LanguageFrController {
   }
 
   @GetMapping("/bulk-upload/local/")
-  public ResponseEntity<Void> bulkUpload(@RequestParam String fileSource) {
+  public ResponseEntity<Void> bulkUpload(
+      @RequestParam String fileSource, @RequestParam String source) {
     try {
-      languageFrService.bulkUpload(fileSource);
+      languageFrService.bulkUpload(fileSource, source);
       log.info("Completed bulk upload");
       return ResponseEntity.ok().build();
     } catch (Exception e) {

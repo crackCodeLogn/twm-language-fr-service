@@ -81,7 +81,7 @@ public class LanguageFrServiceImpl implements LanguageFrService {
   }
 
   @Override
-  public void bulkUpload(String fileLocation) {
+  public void bulkUpload(String fileLocation, String source) {
     List<LanguageFr> frenchWords = Lists.newArrayList();
 
     try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileLocation))) {
@@ -109,6 +109,7 @@ public class LanguageFrServiceImpl implements LanguageFrService {
                   .gender2(gender2)
                   .pronunciation(pronunciation)
                   .posTags(posTags)
+                  .source(source)
                   .build();
           frenchWords.add(word);
         } catch (Exception e) {
@@ -146,6 +147,7 @@ public class LanguageFrServiceImpl implements LanguageFrService {
         .posTags(posTags)
         .pronunciation(languageFrEntity.getPronunciation())
         .gender2(languageFrEntity.getGender2())
+        .source(languageFrEntity.getSource())
         .build();
   }
 
@@ -167,6 +169,7 @@ public class LanguageFrServiceImpl implements LanguageFrService {
         .posTag(sanitizeString(StringUtils.join(languageFr.getPosTags(), ',')))
         .pronunciation(sanitizeString(languageFr.getPronunciation()))
         .gender2(processGender(gender, languageFr.getGender2()))
+        .source(languageFr.getSource())
         .createTimestamp(currentTs)
         .updateTimestamp(currentTs)
         .build();
