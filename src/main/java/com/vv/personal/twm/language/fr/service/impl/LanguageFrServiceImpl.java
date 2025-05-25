@@ -81,8 +81,9 @@ public class LanguageFrServiceImpl implements LanguageFrService {
   }
 
   @Override
-  public void bulkUpload(String fileLocation, String source) {
+  public int bulkUpload(String fileLocation, String source) {
     List<LanguageFr> frenchWords = Lists.newArrayList();
+    int wordsUploaded = 0;
 
     try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileLocation))) {
       String line;
@@ -120,18 +121,19 @@ public class LanguageFrServiceImpl implements LanguageFrService {
       log.error("Failed to read file {}", fileLocation, e);
     }
 
-    frenchWords.forEach(
-        word -> {
-          if (!doesWordExist(word.getFrenchWord())) {
-            try {
-              addWord(word);
-            } catch (Exception e) {
-              log.error("Error while uploading {}", word, e);
-            }
-          } else {
-            log.info("Skipping {} as it is already present", word.getFrenchWord());
-          }
-        });
+    for (LanguageFr word : frenchWords) {
+      if (!doesWordExist(word.getFrenchWord())) {
+        try {
+          addWord(word);
+          wordsUploaded++;
+        } catch (Exception e) {
+          log.error("Error while uploading {}", word, e);
+        }
+      } else {
+        log.info("Skipping {} as it is already present", word.getFrenchWord());
+      }
+    }
+    return wordsUploaded;
   }
 
   private LanguageFr generateLanguageFr(LanguageFrEntity languageFrEntity) {

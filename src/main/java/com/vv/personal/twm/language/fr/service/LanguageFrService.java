@@ -27,5 +27,5 @@ public interface LanguageFrService {
 
   List<LanguageFr> getFrenchWordsMatchingGender(String gender);
 
-  void bulkUpload(String fileLocation, String source);
+  int bulkUpload(String fileLocation, String source);
 }
